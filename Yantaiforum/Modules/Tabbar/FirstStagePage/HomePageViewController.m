@@ -18,6 +18,7 @@
 #import "HomePageListCell.h"
 #import "HomePageFocusBtnView.h"
 #import "HTMLViewController.h"
+#import "MyFollowsView.h"
 
 
 static CGFloat cellHeight = 80.0;
@@ -123,12 +124,18 @@ static CGFloat cellHeight = 80.0;
     
 }
 
+#pragma mark 我的关注数据请求
 - (void)startFollowsNetWorking {
     [YTHUD hudShow];
     NSString * apiStr= @"http://magapp.ytbbs.com/pro_group_contentattention?_token=3308211df41e3681029bb3d51b3a24e3&build=9.3.3.0&clienttype=ios&deviceid=E6A86C3B-D768-4A51-90F4-1FD04B51978C&network=WiFi&p=1&step=20&version=51";
     [YTNetRequest getRequestAPI:apiStr params:nil succeedBlock:^(NSURLSessionDataTask *task, id object) {
         Mod_MyFollows * followsMod = [[Mod_MyFollows alloc] initWithResponseJSONObject:object];
+        MyFollowsView * myFollowsView = [[MyFollowsView alloc] initWithFrame:CGRectMake(__Screen_Width, 0, __Screen_Width, __Height_noTab)];
+        myFollowsView.dataArr = [[NSArray alloc] initWithArray:followsMod.list];
+        [myFollowsView followsViewLoadData];
+        [rootScrollView addSubview:myFollowsView];
         [YTHUD hudHidden];
+        
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         [YTHUD hudHidden];
     }];

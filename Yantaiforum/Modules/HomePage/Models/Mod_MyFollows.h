@@ -13,8 +13,8 @@
 @property (nonatomic,strong) NSString * commentid;
 @property (nonatomic,strong) NSString * fromuserid;
 @property (nonatomic,strong) NSString * fromuser;
-@property (nonatomic,strong) NSString * touserid;
-@property (nonatomic,strong) NSString * touser;
+@property (nonatomic,strong) NSString <Optional>* touserid;
+@property (nonatomic,strong) NSString <Optional>* touser;
 @property (nonatomic,strong) NSString * content;
 
 @end
@@ -43,6 +43,7 @@
 @end
 @protocol Mod_MyFollowsApplauds
 @end
+
 @interface Mod_MyFollowsList : YTBaseModel
 
 @property (nonatomic,strong) NSString * id;
@@ -53,8 +54,9 @@
 @property (nonatomic,strong) NSString * sex;
 @property (nonatomic,strong) NSString * pubdate;
 @property (nonatomic,strong) NSString * tips;
-@property (nonatomic,strong) NSString * des;
-@property (nonatomic,strong) NSString * title;
+@property (nonatomic,strong) NSString * faceurl;
+@property (nonatomic,strong) NSString <Optional> * des;
+@property (nonatomic,strong) NSString <Optional>* title;
 @property (nonatomic,assign) NSInteger click;
 @property (nonatomic,assign) NSInteger applaud; // 点赞数
 @property (nonatomic,assign) NSInteger comment; // 评论数
@@ -72,7 +74,7 @@
 
 @protocol Mod_MyFollowsList
 @end
-@interface Mod_MyFollows : YTBaseModel
 
-@property (nonatomic,strong)NSMutableArray <Mod_MyFollowsList> * list;
+@interface Mod_MyFollows : YTBaseModel
+@property (nonatomic,strong) NSMutableArray<Mod_MyFollowsList>* list;
 @end

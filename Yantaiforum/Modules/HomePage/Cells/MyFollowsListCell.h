@@ -11,7 +11,7 @@
 
 @interface MyFollowsListCell : UITableViewCell
 
-@property (nonatomic,strong)Mod_MyFollows * model;
+@property (nonatomic,strong)Mod_MyFollowsList * cellModel;
 
 @property (weak, nonatomic) IBOutlet UIImageView *iconImg;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
