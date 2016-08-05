@@ -62,6 +62,7 @@
 
 #define color_575757    [UIColor convertHexToRGB:@"575757"]//黑色
 #define color_717171    [UIColor convertHexToRGB:@"717171"]//灰色
+#define color_f0f0f0    [UIColor convertHexToRGB:@"f0f0f0"] // 分割线
 
 /*************************************************************************
  NSLog
