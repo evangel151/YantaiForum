@@ -12,6 +12,7 @@
 
 #import "Mod_HomePage.h"
 #import "Mod_MyFollows.h"
+#import "Mod_HotActivity.h"
 
 #import "MJPullTableView.h"
 #import <SVProgressHUD.h>
@@ -19,7 +20,9 @@
 #import "HomePageFocusBtnView.h"
 #import "HTMLViewController.h"
 #import "MyFollowsView.h"
+#import "HotActivityView.h"
 
+#import <RESideMenu/RESideMenu.h>
 
 static CGFloat cellHeight = 80.0;
 
@@ -58,13 +61,46 @@ static CGFloat cellHeight = 80.0;
     [super viewDidLoad];
     bannerImgArr = [[NSMutableArray alloc] init];
     bannerTextArr = [[NSMutableArray alloc] init];
-    self.title = @"首 页";
     
     [self loadTopPageBtn];
     [self loadRootScrollView];
     [self startNetWorking];
     
     // Do any additional setup after loading the view.
+}
+
+- (void)loadNavigationBarView {
+    [super loadNavigationBarView];
+    UIImageView * titleImg = [[UIImageView alloc] initWithFrame:CGRectMake((__Screen_Width-164)/2.0, kStatusBarHeight, 164, 44)];
+    titleImg.image = [UIImage imageNamed:@"navi_logo_164x44_"];
+    [self.navbarView addSubview:titleImg];
+    
+    UIButton * iconBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    iconBtn.frame = CGRectMake(10, kStatusBarHeight+12, 20, 20);
+    iconBtn.layer.cornerRadius = 10;
+    iconBtn.layer.masksToBounds = YES;
+    iconBtn.backgroundColor = [UIColor greenColor];
+    iconBtn.tag = 2000;
+    [iconBtn addTarget:self action:@selector(clickedOnNavBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navbarView addSubview:iconBtn];
+    
+    UIButton * weatherBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    weatherBtn.frame = CGRectMake(__Screen_Width-30, kStatusBarHeight+12, 20, 20);
+    weatherBtn.layer.cornerRadius = 10;
+    weatherBtn.layer.masksToBounds = YES;
+    weatherBtn.backgroundColor = [UIColor redColor];
+    weatherBtn.tag = 2001;
+    [weatherBtn addTarget:self action:@selector(clickedOnNavBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navbarView addSubview:weatherBtn];
+}
+
+- (void)clickedOnNavBtn:(UIButton *)btn {
+    if (btn.tag == 2000) {
+        [self.sideMenuViewController presentLeftMenuViewController];
+    }
+    else if (btn.tag == 2001) {
+        
+    }
 }
 
 - (void)loadTopPageBtn {
@@ -121,13 +157,16 @@ static CGFloat cellHeight = 80.0;
     if (button.tag == 1001) {
         [self startFollowsNetWorking];
     }
+    if (button.tag == 1002) {
+        [self startHotActivity];
+    }
     
 }
 
 #pragma mark 我的关注数据请求
 - (void)startFollowsNetWorking {
     [YTHUD hudShow];
-    NSString * apiStr= @"http://magapp.ytbbs.com/pro_group_contentattention?_token=3308211df41e3681029bb3d51b3a24e3&build=9.3.3.0&clienttype=ios&deviceid=E6A86C3B-D768-4A51-90F4-1FD04B51978C&network=WiFi&p=1&step=20&version=51";
+    NSString * apiStr = @"http://magapp.ytbbs.com/pro_group_contentattention?_token=3308211df41e3681029bb3d51b3a24e3&build=9.3.3.0&clienttype=ios&deviceid=E6A86C3B-D768-4A51-90F4-1FD04B51978C&network=WiFi&p=1&step=20&version=51";
     [YTNetRequest getRequestAPI:apiStr params:nil succeedBlock:^(NSURLSessionDataTask *task, id object) {
         Mod_MyFollows * followsMod = [[Mod_MyFollows alloc] initWithResponseJSONObject:object];
         MyFollowsView * myFollowsView = [[MyFollowsView alloc] initWithFrame:CGRectMake(__Screen_Width, 0, __Screen_Width, __Height_noTab)];
@@ -141,6 +180,22 @@ static CGFloat cellHeight = 80.0;
     }];
 }
 
+#pragma mark 热门活动
+- (void)startHotActivity {
+     [YTHUD hudShow];
+    NSString * apiStr = @"http://magapp.ytbbs.com/pro_cms_activitylist?_token=3308211df41e3681029bb3d51b3a24e3&build=9.3.3.0&clienttype=ios&deviceid=E6A86C3B-D768-4A51-90F4-1FD04B51978C&network=WiFi&p=1&step=20&version=51";
+    [YTNetRequest getRequestAPI:apiStr params:nil succeedBlock:^(NSURLSessionDataTask *task, id object) {
+        Mod_HotActivity * hotActivityMod = [[Mod_HotActivity alloc] initWithResponseJSONObject:object];
+        HotActivityView * hotActivityView = [[HotActivityView alloc] initWithFrame:CGRectMake(__Screen_Width*2, 0, __Screen_Width, __Height_noTab)];
+        hotActivityView.dataArr = [[NSArray alloc] initWithArray:hotActivityMod.list];
+        [hotActivityView loadHotActivityView];
+        [rootScrollView addSubview:hotActivityView];
+        [YTHUD hudHidden];
+        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        [YTHUD hudHidden];
+    }];
+}
 
 #pragma mark 添加底部scrollView
 - (void)loadRootScrollView {
