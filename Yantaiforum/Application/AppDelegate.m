@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 #import "MainTabbarController.h"
+#import <RESideMenu/RESideMenu.h>
+#import "SlideViewController.h"
 
 @interface AppDelegate ()
 
@@ -19,7 +21,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     MainTabbarController * mainTabbar = [[MainTabbarController alloc] init];
-    self.window.rootViewController = mainTabbar;
+    SlideViewController * leftVC = [[SlideViewController alloc] init];
+    RESideMenu * sideMenuViewController = [[RESideMenu alloc] initWithContentViewController:mainTabbar
+                                                                    leftMenuViewController:leftVC
+                                                                   rightMenuViewController:nil];
+    sideMenuViewController.backgroundImage = [UIImage imageNamed:@"side_bg.jpg"];
+    
+    // Make it a root controller
+    //
+    self.window.rootViewController = sideMenuViewController;
     [self.window makeKeyAndVisible];
     // Override point for customization after application launch.
     return YES;
