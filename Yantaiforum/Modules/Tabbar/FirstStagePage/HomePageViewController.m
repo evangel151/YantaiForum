@@ -21,6 +21,7 @@
 #import "HTMLViewController.h"
 #import "MyFollowsView.h"
 #import "HotActivityView.h"
+#import "WeatherView.h"
 
 #import <RESideMenu/RESideMenu.h>
 
@@ -45,6 +46,9 @@ static CGFloat cellHeight = 80.0;
     CGFloat startOffSet;
     CGFloat endOffSet;
     
+    BOOL weatherShow;
+    WeatherView * weatherView;
+    
 }
 @end
 
@@ -65,8 +69,16 @@ static CGFloat cellHeight = 80.0;
     [self loadTopPageBtn];
     [self loadRootScrollView];
     [self startNetWorking];
-    
+    [self loadWeatherView];
     // Do any additional setup after loading the view.
+}
+
+#pragma mark weatherView
+- (void)loadWeatherView {
+    weatherView = [[WeatherView alloc] initWithFrame:CGRectMake(0, kNavBarViewHeight, __Screen_Width, __Height_noTab)];
+    weatherView.backgroundColor = [UIColor whiteColor];
+    UIWindow * window = [UIApplication sharedApplication].keyWindow;
+    [window addSubview:weatherView];
 }
 
 - (void)loadNavigationBarView {
@@ -88,18 +100,50 @@ static CGFloat cellHeight = 80.0;
     weatherBtn.frame = CGRectMake(__Screen_Width-30, kStatusBarHeight+12, 20, 20);
     weatherBtn.layer.cornerRadius = 10;
     weatherBtn.layer.masksToBounds = YES;
-    weatherBtn.backgroundColor = [UIColor redColor];
+//    weatherBtn.backgroundColor = [UIColor redColor];
     weatherBtn.tag = 2001;
+    [weatherBtn setBackgroundImage:[UIImage imageNamed:@"navi_icon_sidebar_44x44_"] forState:UIControlStateNormal];
     [weatherBtn addTarget:self action:@selector(clickedOnNavBtn:) forControlEvents:UIControlEventTouchUpInside];
     [self.navbarView addSubview:weatherBtn];
 }
 
+#pragma  mark 个人资料(左)  天气 (右)
 - (void)clickedOnNavBtn:(UIButton *)btn {
     if (btn.tag == 2000) {
         [self.sideMenuViewController presentLeftMenuViewController];
     }
     else if (btn.tag == 2001) {
-        
+        if (weatherShow) {
+            [weatherView wearherViewHidden];
+            [UIView animateWithDuration:0.2 animations:^{
+                btn.alpha = 0.6;
+                btn.transform = CGAffineTransformMakeRotation(0);
+            } completion:^(BOOL finished) {
+                [btn setBackgroundImage:[UIImage imageNamed:@"navi_icon_sidebar_44x44_"] forState:UIControlStateNormal];
+                [UIView animateWithDuration:0.2 animations:^{
+                    btn.alpha = 1.0;
+                } completion:^(BOOL finished) {
+                    
+                }];
+            }];
+    
+        }
+        else {
+            [weatherView weatherViewShow];
+            [UIView animateWithDuration:0.2 animations:^{
+                btn.alpha = 0.6;
+                
+            } completion:^(BOOL finished) {
+                [btn setBackgroundImage:[UIImage imageNamed:@"yt_close"] forState:UIControlStateNormal];
+                [UIView animateWithDuration:0.2 animations:^{
+                    btn.alpha = 1.0;
+                    btn.transform = CGAffineTransformMakeRotation(M_PI_2);
+                } completion:^(BOOL finished) {
+                    
+                }];
+            }];
+        }
+        weatherShow = !weatherShow;
     }
 }
 
@@ -384,7 +428,6 @@ static CGFloat cellHeight = 80.0;
         NSLog(@"%f----%f---%f",ScreenHeight,self.tabBarController.tabBar.frame.origin.y,self.tabBarController.tabBar.frame.size.height);
         startOffSet = scrollView.contentOffset.y;
     }
-//    NSLog(@"-!~~~---%f",scrollView.contentOffset.y);
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
@@ -401,6 +444,10 @@ static CGFloat cellHeight = 80.0;
     // Dispose of any resources that can be recreated.
 }
 
+
+- (void)dealloc {
+    [weatherView removeFromSuperview];
+}
 /*
 #pragma mark - Navigation
 
